@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习风格测试 - 找到最适合你的学习方式</title>
+<style>
+  /* ===== 三色心理学配色方案 =====
+     主色 Primary:   #5B8C7A  鼠尾草绿 — 平静、疗愈、自然
+     背景色 Base:    #F5F1EB  暖奶油   — 温暖、舒适、不单调(带极淡纹理)
+     强调色 Accent:  #C4915E  琥珀金   — 温暖、引导、重点
+     文字(中性):    #3A3A3A / #6B6B6B
+  ===================================== */
+
+  :root {
+    --primary: #5B8C7A;
+    --primary-light: #7BA898;
+    --primary-bg: #EBF1EE;
+    --accent: #C4915E;
+    --accent-light: #E8D5BE;
+    --base: #F5F1EB;
+    --card: #FFFFFF;
+    --text: #3A3A3A;
+    --text-light: #6B6B6B;
+    --border: #E5E0D8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background-color: var(--base);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(91, 140, 122, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(196, 145, 94, 0.05) 0%, transparent 40%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: var(--text);
+    padding: 20px 16px;
+    line-height: 1.6;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 22px;
+    max-width: 440px;
+    margin: 0 auto;
+    box-shadow: 0 8px 40px rgba(91, 140, 122, 0.10);
+    border: 1px solid rgba(91, 140, 122, 0.08);
+  }
+
+  .logo { text-align: center; margin-bottom: 10px; }
+  .logo span { font-size: 44px; }
+
+  h1 {
+    font-size: 23px; text-align: center; color: var(--text);
+    margin-bottom: 10px; font-weight: 700; letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    text-align: center; color: var(--text-light); font-size: 14px;
+    margin-bottom: 22px; line-height: 1.7;
+  }
+
+  .tag-list {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-bottom: 24px;
+  }
+  .tag {
+    background: var(--primary-bg); color: var(--primary);
+    padding: 5px 14px; border-radius: 14px; font-size: 12px; font-weight: 500;
+  }
+
+  .btn {
+    display: block; width: 100%; padding: 15px; border: none; border-radius: 14px;
+    font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--primary); color: #fff;
+    box-shadow: 0 4px 14px rgba(91, 140, 122, 0.30);
+  }
+  .btn-primary:hover { background: #4F7D6C; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-ghost {
+    background: var(--primary-bg); color: var(--primary); margin-top: 10px;
+  }
+  .btn-ghost:hover { background: #DFE9E4; }
+
+  .progress-bar {
+    height: 6px; background: var(--border); border-radius: 3px;
+    margin-bottom: 22px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--primary); border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .question-num { font-size: 13px; color: var(--text-light); margin-bottom: 12px; font-weight: 500; }
+  .question-text {
+    font-size: 17px; font-weight: 600; color: var(--text);
+    margin-bottom: 18px; line-height: 1.55;
+  }
+
+  .option {
+    display: block; width: 100%; padding: 15px 16px; margin-bottom: 10px;
+    background: var(--base); border: 2px solid transparent; border-radius: 14px;
+    font-size: 15px; text-align: left; cursor: pointer; transition: all 0.2s ease;
+    color: var(--text); font-family: inherit; line-height: 1.5;
+  }
+  .option:hover { background: #EFEAE1; }
+  .option.selected { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); font-weight: 500; }
+
+  .result-icon { font-size: 58px; text-align: center; margin: 8px 0; }
+  .result-type {
+    text-align: center; font-size: 25px; font-weight: 700;
+    color: var(--primary); margin-bottom: 4px;
+  }
+  .result-label {
+    text-align: center; font-size: 13px; color: var(--accent);
+    margin-bottom: 18px; font-weight: 500; letter-spacing: 0.5px;
+  }
+  .result-brief {
+    background: var(--base); border-radius: 14px; padding: 16px 18px;
+    margin-bottom: 18px; line-height: 1.75; font-size: 14px; color: var(--text);
+  }
+
+  .locked { filter: blur(4px); user-select: none; pointer-events: none; }
+
+  .unlock-tip {
+    background: linear-gradient(135deg, #FBF6EF 0%, #F5EDE0 100%);
+    border: 1px solid var(--accent-light); border-radius: 16px;
+    padding: 20px; text-align: center; margin-bottom: 16px;
+  }
+  .unlock-tip .title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .unlock-tip .price {
+    font-size: 30px; font-weight: 700; color: var(--accent); margin: 10px 0;
+  }
+  .features { text-align: left; font-size: 13px; color: var(--text-light); margin: 14px 0; }
+  .features li {
+    margin-bottom: 5px; list-style: none; padding-left: 22px; position: relative;
+    line-height: 1.6;
+  }
+  .features li::before {
+    content: "✓"; position: absolute; left: 0; color: var(--primary); font-weight: bold;
+  }
+
+  .full-report { line-height: 1.85; font-size: 14px; color: var(--text); }
+  .full-report h3 {
+    color: var(--primary); margin: 18px 0 8px; font-size: 16px;
+    padding-bottom: 6px; border-bottom: 2px solid var(--primary-bg);
+  }
+  .full-report p { margin-bottom: 10px; }
+
+  .footer-tip { text-align: center; font-size: 12px; color: var(--text-light); margin-top: 18px; }
+
+  /* ===== 免责声明与联系方式 ===== */
+  .page-footer {
+    margin-top: 20px; padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    text-align: center; font-size: 12px; color: var(--text-light);
+    line-height: 1.75;
+  }
+  .page-footer .disclaimer {
+    display: block; color: var(--text-light); margin-bottom: 6px;
+  }
+  .page-footer .qq-contact {
+    color: var(--primary); font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    border-bottom: 1px dotted var(--primary-light);
+  }
+  .notice-box {
+    background: #FBF9F5; border-left: 3px solid var(--accent-light);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;
+    font-size: 12px; color: var(--text-light); line-height: 1.7;
+  }
+
+  .hidden { display: none !important; }
+
+  .loading { text-align: center; padding: 48px; color: var(--text-light); }
+  .loading .spinner {
+    font-size: 34px; animation: spin 1s linear infinite; display: inline-block;
+  }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* ===== 桌面端响应式适配 ===== */
+  @media (min-width: 768px) {
+    body { padding: 48px 24px; }
+    .card {
+      max-width: 520px;
+      padding: 40px 36px;
+      border-radius: 24px;
+    }
+    h1 { font-size: 27px; }
+    .subtitle { font-size: 15px; }
+    .question-text { font-size: 18px; }
+    .option { font-size: 15px; padding: 16px 18px; }
+    .result-type { font-size: 28px; }
+    .full-report { font-size: 15px; }
+    .logo span { font-size: 52px; }
+  }
+
+  @media (min-width: 1024px) {
+    body { padding: 60px 24px; }
+    .card {
+      max-width: 560px;
+      box-shadow: 0 12px 50px rgba(91, 140, 122, 0.12);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 首页 -->
+<div id="page-home" class="card">
+  <div class="logo"><span>🎓</span></div>
+  <h1>你的学习风格是什么？</h1>
+  <p class="subtitle">基于视觉 / 听觉 / 读写 / 动觉四种学习偏好 · 16 道题 · 3 分钟<br>找到更适合你的学习方式，告别低效努力</p>
+  <div class="tag-list">
+    <span class="tag">👁️ 视觉型</span>
+    <span class="tag">👂 听觉型</span>
+    <span class="tag">📖 读写型</span>
+    <span class="tag">✋ 动觉型</span>
+  </div>
+  <button class="btn btn-primary" onclick="startTest()">开始测试（免费）</button>
+  <p class="footer-tip">测完立即查看你的学习风格结果</p>
+
+  <div class="page-footer">
+    <span class="disclaimer">⚠️ 本测试只用于娱乐参考，非医疗诊断结果，不作为专业心理或医学建议。</span>
+    <span>问题咨询 / 售后联系 QQ：<a class="qq-contact" onclick="copyQQ()">3641906449</a></span>
+  </div>
+</div>
+
+<!-- 答题页 -->
+<div id="page-test" class="card hidden">
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  <div class="question-num" id="q-num">第 1 / 16 题</div>
+  <div class="question-text" id="q-text"></div>
+  <div id="options"></div>
+</div>
+
+<!-- 结果页 -->
+<div id="page-result" class="card hidden">
+  <div class="result-icon" id="r-icon"></div>
+  <div class="result-type" id="r-type"></div>
+  <div class="result-label" id="r-label"></div>
+  <div class="result-brief" id="r-brief"></div>
+  <div class="notice-box">提示：本测试结果基于学习偏好自评，仅用于娱乐和参考，<strong>非医疗诊断结果</strong>，也不构成专业心理、教育或医学建议。</div>
+
+  <!-- 付费区 -->
+  <div id="pay-section">
+    <div class="full-report locked" id="full-report"></div>
+    <div class="unlock-tip">
+      <div class="title" id="unlock-title">🔒 解锁完整学习报告</div>
+      <div class="price" id="unlock-price">¥4.99</div>
+      <ul class="features">
+        <li>你的学习风格深度解析</li>
+        <li>专属学习方法与提分策略</li>
+        <li>短板突破建议</li>
+        <li>期末/考研备考规划</li>
+      </ul>
+      <button class="btn btn-primary" id="unlock-btn" onclick="pay()">立即解锁完整报告</button>
+      <button class="btn btn-ghost" onclick="shareResult()">分享给同学</button>
+    </div>
+  </div>
+
+  <!-- 已解锁 -->
+  <div id="unlocked-section" class="hidden">
+    <div class="full-report" id="full-report-show"></div>
+    <button class="btn btn-primary" onclick="restart()">再测一次</button>
+    <button class="btn btn-ghost" onclick="shareResult()">分享给同学</button>
+  </div>
+
+  <div class="page-footer">
+    <span class="disclaimer">⚠️ 本测试只用于娱乐参考，非医疗诊断结果。</span>
+    <span>问题咨询 / 售后联系 QQ：<a class="qq-contact" onclick="copyQQ()">3641906449</a></span>
+  </div>
+</div>
+
+<!-- 支付中 -->
+<div id="page-loading" class="card hidden">
+  <div class="loading">
+    <div class="spinner">⏳</div>
+    <p style="margin-top:12px;">正在跳转支付...</p>
+  </div>
+</div>
+
+<script>
+// ============ 题库（学习偏好四维模型，共53题，每题4选项对应 V/A/R/K） ============
+// 维度说明：V=视觉(Visual) A=听觉(Auditory) R=读写(Read/Write) K=动觉(Kinesthetic)
+// 每个选项的维度(d)按维度语义人工校准
+const questionBank = [
+  // ---- 以下16题为核心题库（情境式自评题，原创表述） ----
+  { q: "你想找到朋友推荐的一家店，你会？", opts: [
+    { t: "根据已知地点推断它的大致位置", d: "K" },
+    { t: "让朋友口头告诉你怎么走", d: "A" },
+    { t: "把街道和方向写下来记着", d: "R" },
+    { t: "看地图找位置", d: "V" }
+  ]},
+  { q: "网站上有个教你做图表的视频，有人在讲、有文字清单、也有图示。你学得最多的是？", opts: [
+    { t: "看图表和图示", d: "V" },
+    { t: "听讲解", d: "A" },
+    { t: "读文字说明", d: "R" },
+    { t: "看实际操作动作", d: "K" }
+  ]},
+  { q: "你想了解一次旅行的更多信息，你会？", opts: [
+    { t: "查看行程亮点和活动的详细介绍", d: "K" },
+    { t: "用地图看各个地点的位置", d: "V" },
+    { t: "阅读关于这次旅行的文字介绍", d: "R" },
+    { t: "和组织方或同行的人聊聊", d: "A" }
+  ]},
+  { q: "在选择专业或职业方向时，对你来说重要的是？", opts: [
+    { t: "能把知识用到实际情境中", d: "K" },
+    { t: "能通过讨论和别人交流", d: "A" },
+    { t: "能用到设计、地图或图表", d: "V" },
+    { t: "能用文字进行书面表达", d: "R" }
+  ]},
+  { q: "当你在学习时，你会？", opts: [
+    { t: "喜欢把东西讲出来讨论", d: "A" },
+    { t: "观察事物的规律和模式", d: "V" },
+    { t: "用例子和实际应用来理解", d: "K" },
+    { t: "阅读书籍、文章和讲义", d: "R" }
+  ]},
+  { q: "你想省钱，要在几个方案中做选择，你会？", opts: [
+    { t: "结合自己的财务情况，看每个方案的实际例子", d: "K" },
+    { t: "阅读详细介绍各方案的手册", d: "R" },
+    { t: "用图表展示不同时间段各方案的差异", d: "V" },
+    { t: "和懂行的人讨论这些方案", d: "A" }
+  ]},
+  { q: "你想学一种新的桌游或卡牌游戏，你会？", opts: [
+    { t: "先看别人玩几局再加入", d: "K" },
+    { t: "听别人讲解并提问", d: "A" },
+    { t: "看图示说明规则、步骤和策略", d: "V" },
+    { t: "阅读游戏说明书", d: "R" }
+  ]},
+  { q: "你身体不舒服去看医生，你希望医生？", opts: [
+    { t: "给你书面资料解释问题", d: "R" },
+    { t: "用模型展示问题所在", d: "K" },
+    { t: "口头描述问题", d: "A" },
+    { t: "指着图告诉你问题在哪", d: "V" }
+  ]},
+  { q: "你想在电脑上学一个新功能，你会？", opts: [
+    { t: "阅读附带的说明书", d: "R" },
+    { t: "找会的人聊一聊", d: "A" },
+    { t: "直接动手试，边做边学", d: "K" },
+    { t: "跟着书上的图示一步步做", d: "V" }
+  ]},
+  { q: "在网上学习时，你喜欢？", opts: [
+    { t: "展示怎么做的视频", d: "K" },
+    { t: "有趣的视觉设计和动效", d: "V" },
+    { t: "详细的文字描述、列表和解释", d: "R" },
+    { t: "听播客或专家访谈音频", d: "A" }
+  ]},
+  { q: "你想了解一个新项目，你希望获得？", opts: [
+    { t: "展示项目各阶段的图表和成本效益表", d: "V" },
+    { t: "一份说明项目主要特点的书面报告", d: "R" },
+    { t: "一次讨论项目的机会", d: "A" },
+    { t: "项目成功应用的实际案例", d: "K" }
+  ]},
+  { q: "你想学着拍出更好的照片，你会？", opts: [
+    { t: "提问并讨论相机和它的功能", d: "A" },
+    { t: "看书面说明了解怎么操作", d: "R" },
+    { t: "看图示了解相机每个部件的作用", d: "V" },
+    { t: "看好照片和差照片的对比例子来改进", d: "K" }
+  ]},
+  { q: "你更喜欢老师或演讲者使用？", opts: [
+    { t: "演示、模型或实际操作环节", d: "K" },
+    { t: "问答、谈话、小组讨论或嘉宾分享", d: "A" },
+    { t: "讲义、书籍或阅读材料", d: "R" },
+    { t: "图示、图表、地图或图形", d: "V" }
+  ]},
+  { q: "你完成了一次比赛或考试，希望得到反馈。你想？", opts: [
+    { t: "用你做过的例子来说明", d: "K" },
+    { t: "用书面文字描述你的结果", d: "R" },
+    { t: "有人跟你聊聊你的表现", d: "A" },
+    { t: "用图表展示你的成绩和进步", d: "V" }
+  ]},
+  { q: "你想了解一套房子或公寓的情况，去看之前你想要？", opts: [
+    { t: "看房子的视频", d: "K" },
+    { t: "和房东或中介聊聊", d: "A" },
+    { t: "打印出来的房间和设施说明", d: "R" },
+    { t: "房间平面图和周边地图", d: "V" }
+  ]},
+  { q: "你要组装一张需要拼装的桌子，你学得最好的方式是？", opts: [
+    { t: "看展示每个组装步骤的图示", d: "V" },
+    { t: "听做过的人给建议", d: "A" },
+    { t: "看零件附带的说明书", d: "R" },
+    { t: "看别人组装类似家具的视频", d: "K" }
+  ]},
+
+  // ---- 以下37题为扩展题库，维度语义人工校准 ----
+  { q: "老师讲一个新概念时，你更容易记住的是？", opts: [
+    { t: "黑板或PPT上的图表和关键词", d: "V" },
+    { t: "老师讲解的语气和举的例子", d: "A" },
+    { t: "教材里对应的文字段落", d: "R" },
+    { t: "老师让大家做的课堂练习", d: "K" }
+  ]},
+  { q: "复习备考时，你最常用的方法是？", opts: [
+    { t: "画思维导图、用彩色笔标注重点", d: "V" },
+    { t: "朗读知识点、跟同学互相提问", d: "A" },
+    { t: "反复看书、整理笔记", d: "R" },
+    { t: "大量刷题、做模拟卷", d: "K" }
+  ]},
+  { q: "学一首新歌，你通常怎么学会？", opts: [
+    { t: "看着歌词MV跟唱", d: "V" },
+    { t: "反复听原唱找感觉", d: "A" },
+    { t: "看歌词逐句学", d: "R" },
+    { t: "跟着节奏哼唱、边唱边打拍子", d: "K" }
+  ]},
+  { q: "别人给你指路时，你更希望？", opts: [
+    { t: "画一张简易地图给你", d: "V" },
+    { t: "口头一步步告诉你怎么走", d: "A" },
+    { t: "写成文字说明发给你", d: "R" },
+    { t: "直接带你走一遍", d: "K" }
+  ]},
+  { q: "你更喜欢哪种课堂形式？", opts: [
+    { t: "有大量图片、视频、图表展示", d: "V" },
+    { t: "老师讲解生动、有互动问答", d: "A" },
+    { t: "有详细的讲义和板书", d: "R" },
+    { t: "有实验、案例分析、动手环节", d: "K" }
+  ]},
+  { q: "遇到难题卡住时，你会？", opts: [
+    { t: "画图分析、列图表理清关系", d: "V" },
+    { t: "找人讨论，讲出来就通了", d: "A" },
+    { t: "查资料、看例题的解法", d: "R" },
+    { t: "动手尝试不同解法", d: "K" }
+  ]},
+  { q: "看完一部电影或剧，你记得最清楚的是？", opts: [
+    { t: "画面、场景、服装造型", d: "V" },
+    { t: "台词、背景音乐", d: "A" },
+    { t: "剧情逻辑、人物对话文字", d: "R" },
+    { t: "动作场面、情绪感受", d: "K" }
+  ]},
+  { q: "规划一天的学习任务时，你习惯用？", opts: [
+    { t: "时间轴、流程图、可视化表格", d: "V" },
+    { t: "口头说一遍或录音提醒自己", d: "A" },
+    { t: "写待办清单、做完打勾", d: "R" },
+    { t: "直接开始做、想到什么做什么", d: "K" }
+  ]},
+  { q: "你觉得下面哪种学习环境效率最高？", opts: [
+    { t: "有好看的文具、整洁的桌面", d: "V" },
+    { t: "有背景音或白噪音", d: "A" },
+    { t: "有书本和纸笔", d: "R" },
+    { t: "可以走动、换姿势", d: "K" }
+  ]},
+  { q: "别人跟你解释一件事，你更容易理解当TA？", opts: [
+    { t: "画个图给你看", d: "V" },
+    { t: "用语言详细描述", d: "A" },
+    { t: "写下来给你看", d: "R" },
+    { t: "做个示范给你看", d: "K" }
+  ]},
+  { q: "你玩手机或电脑时，最常做的是？", opts: [
+    { t: "看图片、刷视频、看图表", d: "V" },
+    { t: "听播客、听音乐、语音聊天", d: "A" },
+    { t: "看文章、读小说、写东西", d: "R" },
+    { t: "玩游戏、操作类应用", d: "K" }
+  ]},
+  { q: "记英语单词，你觉得哪种方式最有效？", opts: [
+    { t: "看单词的拼写和形状联想", d: "V" },
+    { t: "听发音、大声朗读", d: "A" },
+    { t: "抄单词、写例句", d: "R" },
+    { t: "用单词造句、做对话练习", d: "K" }
+  ]},
+  { q: "在小组作业中，你最喜欢的角色是？", opts: [
+    { t: "做PPT、画图、整理视觉材料", d: "V" },
+    { t: "参与讨论、口头汇报", d: "A" },
+    { t: "写报告、整理文字资料", d: "R" },
+    { t: "动手做模型、做演示", d: "K" }
+  ]},
+  { q: "你学习一个新的运动或舞蹈动作时，会？", opts: [
+    { t: "看教练或视频的示范动作", d: "V" },
+    { t: "听教练讲解动作要领", d: "A" },
+    { t: "看动作分解的文字说明", d: "R" },
+    { t: "直接跟着做、反复练习", d: "K" }
+  ]},
+  { q: "你要买一件电子产品，了解它的方式是？", opts: [
+    { t: "看产品图片和测评视频", d: "V" },
+    { t: "听用过的人评价", d: "A" },
+    { t: "看详细的参数表和说明书", d: "R" },
+    { t: "去实体店亲手操作体验", d: "K" }
+  ]},
+  { q: "你要准备一个课堂展示，你会？", opts: [
+    { t: "做精美的PPT，多用图表和图片", d: "V" },
+    { t: "反复练习讲稿，对着镜子说", d: "A" },
+    { t: "写逐字稿，照着念", d: "R" },
+    { t: "现场演示或做互动环节", d: "K" }
+  ]},
+  { q: "当你要记住一个电话号码时，你会？", opts: [
+    { t: "在脑海里想象数字的样子", d: "V" },
+    { t: "口头重复念几遍", d: "A" },
+    { t: "写下来或打字存着", d: "R" },
+    { t: "用手指在空中比划着记", d: "K" }
+  ]},
+  { q: "你更喜欢哪种考试题型？", opts: [
+    { t: "带图表、图片的选择题", d: "V" },
+    { t: "听力理解题", d: "A" },
+    { t: "阅读理解和写作题", d: "R" },
+    { t: "实验操作或案例分析题", d: "K" }
+  ]},
+  { q: "学一门新语言时，你进步最快的方式是？", opts: [
+    { t: "看带字幕的影视剧", d: "V" },
+    { t: "和母语者聊天对话", d: "A" },
+    { t: "背单词书、做语法练习", d: "R" },
+    { t: "去当地生活或沉浸式使用", d: "K" }
+  ]},
+  { q: "你在图书馆选座位，更倾向于？", opts: [
+    { t: "光线好、视野开阔的位置", d: "V" },
+    { t: "允许小声讨论的区域", d: "A" },
+    { t: "有大桌面能摊开书的位置", d: "R" },
+    { t: "可以随时走动、换地方的位置", d: "K" }
+  ]},
+  { q: "你做读书笔记的方式是？", opts: [
+    { t: "画思维导图、做图表", d: "V" },
+    { t: "用语音备忘录记录想法", d: "A" },
+    { t: "摘抄句子、写读后感", d: "R" },
+    { t: "边读边动手实践书里的方法", d: "K" }
+  ]},
+  { q: "当你要向别人解释一个复杂概念时，你会？", opts: [
+    { t: "画个图或用比喻来说明", d: "V" },
+    { t: "口头举例子讲清楚", d: "A" },
+    { t: "写一段文字说明发给对方", d: "R" },
+    { t: "直接做个演示", d: "K" }
+  ]},
+  { q: "你参加培训课程时，最希望？", opts: [
+    { t: "有丰富的PPT和视频资料", d: "V" },
+    { t: "讲师讲得生动有趣", d: "A" },
+    { t: "有纸质讲义可以带走", d: "R" },
+    { t: "有动手实操和练习环节", d: "K" }
+  ]},
+  { q: "你要学做一道新菜，你会？", opts: [
+    { t: "看菜谱上的成品图和步骤图", d: "V" },
+    { t: "听家人或朋友讲做法", d: "A" },
+    { t: "看菜谱的文字步骤", d: "R" },
+    { t: "直接动手做，边做边调整", d: "K" }
+  ]},
+  { q: "你在等公交或排队时，习惯？", opts: [
+    { t: "看周围的环境和人", d: "V" },
+    { t: "听音乐或播客", d: "A" },
+    { t: "看书或刷文字资讯", d: "R" },
+    { t: "走来走去、活动身体", d: "K" }
+  ]},
+  { q: "你更喜欢哪种获取新闻的方式？", opts: [
+    { t: "看图文新闻和信息图", d: "V" },
+    { t: "听新闻广播或视频", d: "A" },
+    { t: "读深度文章和文字报道", d: "R" },
+    { t: "看现场直播或视频报道", d: "K" }
+  ]},
+  { q: "当你情绪不好时，你倾向于？", opts: [
+    { t: "看喜欢的图片或美景视频", d: "V" },
+    { t: "找朋友倾诉、聊天", d: "A" },
+    { t: "写日记或看治愈的文字", d: "R" },
+    { t: "去运动、散步、发泄精力", d: "K" }
+  ]},
+  { q: "你理解一个抽象的理论时，靠的是？", opts: [
+    { t: "把它想象成一个图像或模型", d: "V" },
+    { t: "听别人用通俗的话讲一遍", d: "A" },
+    { t: "反复阅读定义和推导过程", d: "R" },
+    { t: "找一个实际例子套用进去", d: "K" }
+  ]},
+  { q: "你玩解谜游戏时，更擅长？", opts: [
+    { t: "观察画面细节找线索", d: "V" },
+    { t: "听背景音乐和音效提示", d: "A" },
+    { t: "读文字提示和剧情", d: "R" },
+    { t: "动手尝试各种操作组合", d: "K" }
+  ]},
+  { q: "你要准备面试，你会？", opts: [
+    { t: "看面试技巧的视频和流程图", d: "V" },
+    { t: "找朋友模拟面试对话", d: "A" },
+    { t: "写自我介绍和常见问题答案", d: "R" },
+    { t: "对着镜子练习表情和动作", d: "K" }
+  ]},
+  { q: "你买衣服时，决定因素更多是？", opts: [
+    { t: "款式、颜色、搭配效果", d: "V" },
+    { t: "店员的介绍和推荐", d: "A" },
+    { t: "面料成分和洗涤说明", d: "R" },
+    { t: "试穿的手感和舒适度", d: "K" }
+  ]},
+  { q: "你学习历史时，最能记住的是？", opts: [
+    { t: "历史地图、年代轴、文物图片", d: "V" },
+    { t: "老师讲的历史故事", d: "A" },
+    { t: "历史事件的文字描述", d: "R" },
+    { t: "历史场景的还原和体验活动", d: "K" }
+  ]},
+  { q: "你学数学公式时，倾向于？", opts: [
+    { t: "把公式和图形结合起来理解", d: "V" },
+    { t: "把公式念出来、背口诀", d: "A" },
+    { t: "抄写公式、推导过程", d: "R" },
+    { t: "用公式做大量练习题", d: "K" }
+  ]},
+  { q: "你装修或布置房间时，会？", opts: [
+    { t: "看大量装修效果图找灵感", d: "V" },
+    { t: "听设计师或朋友的建议", d: "A" },
+    { t: "列购物清单和预算表", d: "R" },
+    { t: "亲手摆放、调整直到满意", d: "K" }
+  ]},
+  { q: "你参加社团活动，更愿意做？", opts: [
+    { t: "设计海报、做宣传图", d: "V" },
+    { t: "主持活动、协调沟通", d: "A" },
+    { t: "写策划案、会议记录", d: "R" },
+    { t: "布置场地、现场执行", d: "K" }
+  ]},
+  { q: "你早上起床后，让自己清醒的方式是？", opts: [
+    { t: "拉开窗帘看窗外", d: "V" },
+    { t: "放音乐或听新闻", d: "A" },
+    { t: "看会儿书或手机资讯", d: "R" },
+    { t: "洗漱、拉伸、做运动", d: "K" }
+  ]},
+  { q: "你判断一个人性格时，更多依据？", opts: [
+    { t: "对方的表情、穿着、肢体语言", d: "V" },
+    { t: "对方说话的语气和内容", d: "A" },
+    { t: "对方发的文字消息和朋友圈", d: "R" },
+    { t: "和对方一起做事时的互动", d: "K" }
+  ]}
+];
+
+// ============ 随机抽题逻辑 ============
+const QUESTIONS_PER_TEST = 16;
+
+// Fisher-Yates 洗牌
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// 从题库抽取16题，并打乱题目顺序 + 每题选项顺序
+function pickQuestions() {
+  const shuffledBank = shuffle(questionBank);
+  const selected = shuffledBank.slice(0, QUESTIONS_PER_TEST);
+  // 每题内部选项也打乱，维度跟随选项不影响计分
+  return selected.map(q => ({ ...q, opts: shuffle(q.opts) }));
+}
+
+// 当前测试使用的题目
+let questions = [];
+
+// ============ 4种学习风格的报告内容 ============
+const reports = {
+  V: {
+    icon: "👁️", name: "视觉型学习者", label: "Visual · 用眼睛学习",
+    brief: "你通过图像、图表、颜色和空间布局来吸收信息效果最好。你擅长看思维导图、PPT和视频，对视觉细节敏感。",
+    full: `<h3>🧠 你的学习画像</h3><p>你是典型的<strong>视觉型学习者</strong>。你的大脑对图像、颜色、空间关系的处理效率远高于文字和声音。你看一眼思维导图就能记住大概框架，看视频比听讲座吸收快得多。</p>
+<h3>✅ 你的学习优势</h3><p>• 空间想象力强，擅长几何、地理、设计类科目<br>• 观察力敏锐，能注意到别人忽略的细节<br>• 用思维导图整理知识效率极高<br>• 看一遍就能记住大致结构</p>
+<h3>⚠️ 你的学习短板</h3><p>• 纯文字的长篇大论容易走神<br>• 只听老师讲不看板书时吸收差<br>• 容易被画面分散注意力<br>• 口头指令听完就忘</p>
+<h3>🎯 提分策略</h3><p>1. <strong>笔记用思维导图</strong>：每章知识画成思维导图，用不同颜色分类，复习时只看图<br>2. <strong>善用视频资源</strong>：B站、中国大学MOOC找对应课程视频，比纯看书效率高2-3倍<br>3. <strong>彩色标注法</strong>：用4种颜色笔标注：定义(蓝)、重点(红)、例子(绿)、疑问(黄)<br>4. <strong>画出来</strong>：遇到抽象概念，尝试画成图或流程图，立刻就懂了<br>5. <strong>错题本用图表</strong>：把错题按题型和知识点做成表格，一目了然</p>
+<h3>📅 备考规划建议</h3><p>• 第一遍：看视频课+画思维导图建立框架<br>• 第二遍：对照思维导图看书，补充细节<br>• 第三遍：只看思维导图回忆，卡壳处再翻书<br>• 冲刺：看自己画的图和错题表</p>`
+  },
+  A: {
+    icon: "👂", name: "听觉型学习者", label: "Auditory · 用耳朵学习",
+    brief: "你通过听和说来学习效果最好。你擅长听课、讨论、听录音，对语言的节奏和语调敏感。",
+    full: `<h3>🧠 你的学习画像</h3><p>你是<strong>听觉型学习者</strong>。你通过听和说吸收信息的效率最高。课堂上认真听老师讲比课后看书管用，跟同学讨论一遍比自己闷头学记得牢。</p>
+<h3>✅ 你的学习优势</h3><p>• 语言理解和表达能力强，擅长文科和语言类科目<br>• 课堂吸收率高，老师讲的重点能快速抓住<br>• 通过讨论能快速理清思路<br>• 记忆力对声音和语言更敏感</p>
+<h3>⚠️ 你的学习短板</h3><p>• 纯看书容易犯困、走神<br>• 看不懂图表和流程图<br>• 安静的环境反而效率低<br>• 写长文时容易卡住</p>
+<h3>🎯 提分策略</h3><p>1. <strong>录音回听法</strong>：把自己的朗读或讲课录音，走路、吃饭时反复听<br>2. <strong>费曼学习法</strong>：把知识点讲给别人听（或对着空气讲），讲不清楚就是没学会<br>3. <strong>小组讨论</strong>：找同学组学习小组，互相讲解和提问<br>4. <strong>口诀记忆法</strong>：把知识点编成口诀、顺口溜，用唱的方式记<br>5. <strong>听课法</strong>：上课认真听比课后自学效率高3倍，坐前排、跟老师眼神交流</p>
+<h3>📅 备考规划建议</h3><p>• 第一遍：认真听课/听视频，做简单笔记<br>• 第二遍：把笔记内容大声朗读并录音<br>• 第三遍：反复听录音+跟同学讨论<br>• 冲刺：自己给自己讲解每个知识点</p>`
+  },
+  R: {
+    icon: "📖", name: "读写型学习者", label: "Read/Write · 用文字学习",
+    brief: "你通过阅读和写作来学习效果最好。你擅长看书、做笔记、写总结，对文字信息的处理能力强。",
+    full: `<h3>🧠 你的学习画像</h3><p>你是<strong>读写型学习者</strong>。你对文字信息的处理能力最强，通过阅读和写作来巩固知识。你喜欢详细的笔记、清单和文字说明，觉得"好记性不如烂笔头"。</p>
+<h3>✅ 你的学习优势</h3><p>• 阅读理解能力强，擅长所有需要大量阅读的科目<br>• 笔记记得详细且有条理<br>• 擅长文字表达，写作和论述题得分高<br>• 自主学习能力强，能靠看书学会</p>
+<h3>⚠️ 你的学习短板</h3><p>• 看视频和听课时容易走神<br>• 对图表和空间关系不敏感<br>• 动手操作类任务不擅长<br>• 学习方式单一，容易陷入"抄书"</p>
+<h3>🎯 提分策略</h3><p>1. <strong>康奈尔笔记法</strong>：页面分三栏——左边关键词、右边笔记、底部总结<br>2. <strong>总结提炼法</strong>：每看完一节，用自己的话写3-5句总结<br>3. <strong>提纲式笔记</strong>：用层级标题和编号整理知识，形成文字框架<br>4. <strong>错题详写</strong>：错题本不仅写答案，还要写错因、正确思路、同类题解法<br>5. <strong>输出倒逼输入</strong>：写学习心得、写解题过程、写知识串联</p>
+<h3>📅 备考规划建议</h3><p>• 第一遍：通读教材+做详细笔记<br>• 第二遍：整理笔记，提炼提纲和关键词<br>• 第三遍：只看提纲回忆，默写不出来的再回去看<br>• 冲刺：背自己的笔记和错题本</p>`
+  },
+  K: {
+    icon: "✋", name: "动觉型学习者", label: "Kinesthetic · 用身体学习",
+    brief: "你通过动手做、亲身实践来学习效果最好。你擅长实验、操作、案例分析，坐着不动看书效率低。",
+    full: `<h3>🧠 你的学习画像</h3><p>你是<strong>动觉型学习者</strong>。你需要通过身体活动和实际操作来学习。坐着不动看书对你来说是折磨，但一上手做立刻就会了。你是"做中学"的典型代表。</p>
+<h3>✅ 你的学习优势</h3><p>• 动手能力强，擅长实验、实践类科目<br>• 对操作流程记忆深刻<br>• 能快速将理论与实际结合<br>• 精力充沛，学习耐力强</p>
+<h3>⚠️ 你的学习短板</h3><p>• 长时间坐着看书容易烦躁<br>• 纯理论和抽象概念难理解<br>• 上课坐不住，容易分心<br>• 对需要死记硬背的内容头疼</p>
+<h3>🎯 提分策略</h3><p>1. <strong>实践学习法</strong>：学编程就写代码，学会计就做账，学物理就做实验<br>2. <strong>走动学习法</strong>：背书时来回走动，比坐着记效率高<br>3. <strong>手势记忆法</strong>：记公式或概念时配合手势，身体记忆更牢<br>4. <strong>案例分析法</strong>：把抽象概念套到具体案例中理解<br>5. <strong>番茄+运动</strong>：学25分钟起来活动5分钟，保持大脑清醒</p>
+<h3>📅 备考规划建议</h3><p>• 第一遍：边看边做，学一章做一章的题/实验<br>• 第二遍：做题为主，从题目中回扣知识点<br>• 第三遍：整理错题，归纳解题套路<br>• 冲刺：模拟考试，限时做题练手感</p>`
+  }
+};
+
+// ============ 状态管理 ============
+let currentQ = 0;
+let scores = { V: 0, A: 0, R: 0, K: 0 };
+let answers = [];
+
+function startTest() {
+  currentQ = 0;
+  scores = { V: 0, A: 0, R: 0, K: 0 };
+  answers = [];
+  // 每次测试从题库随机抽取16题，题目和选项顺序都打乱
+  questions = pickQuestions();
+  showPage('page-test');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('q-num').textContent = `第 ${currentQ + 1} / ${questions.length} 题`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress').style.width = ((currentQ) / questions.length * 100) + '%';
+  const optsDiv = document.getElementById('options');
+  optsDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt.t;
+    btn.onclick = () => selectOption(opt.d, btn);
+    optsDiv.appendChild(btn);
+  });
+}
+
+function selectOption(dim, btn) {
+  document.querySelectorAll('.option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  scores[dim]++;
+  answers.push(dim);
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < questions.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 200);
+}
+
+function showResult() {
+  document.getElementById('progress').style.width = '100%';
+  // 找出最高分维度
+  let maxDim = 'V', maxScore = 0;
+  for (const d in scores) {
+    if (scores[d] > maxScore) { maxScore = scores[d]; maxDim = d; }
+  }
+  const r = reports[maxDim];
+  document.getElementById('r-icon').textContent = r.icon;
+  document.getElementById('r-type').textContent = r.name;
+  document.getElementById('r-label').textContent = r.label;
+  document.getElementById('r-brief').textContent = r.brief;
+  document.getElementById('full-report').innerHTML = r.full;
+  document.getElementById('full-report-show').innerHTML = r.full;
+  showPage('page-result');
+  document.getElementById('pay-section').classList.remove('hidden');
+  document.getElementById('unlocked-section').classList.add('hidden');
+}
+
+// ============ 内测开关 ============
+// true  = 内测模式：点击按钮直接解锁完整报告，不跳转支付（零成本验证）
+// false = 正式模式：跳转虎皮椒支付，付费成功后才解锁
+const FREE_MODE = true;
+
+// ============ 支付（虎皮椒对接） ============
+const PAY_CONFIG = {
+  appid: 'YOUR_APPID',
+  appsecret: 'YOUR_APPSECRET',
+  notify_url: 'https://your-domain.com/notify',
+  price: 499
+};
+
+function pay() {
+  // 内测模式：不跳转支付，直接解锁
+  if (FREE_MODE) {
+    unlockReport();
+    showToast('内测期间免费解锁\n有问题欢迎反馈 QQ：3641906449');
+    return;
+  }
+  showPage('page-loading');
+  const orderId = 'LS' + Date.now() + Math.floor(Math.random() * 1000);
+  const payUrl = 'https://api.xunhupay.com/payment/do.html';
+  const params = new URLSearchParams({
+    appid: PAY_CONFIG.appid,
+    out_trade_no: orderId,
+    total_fee: PAY_CONFIG.price.toString(),
+    body: '学习风格测试完整报告',
+    notify_url: PAY_CONFIG.notify_url,
+    return_url: window.location.href + '?unlocked=1&order=' + orderId,
+    type: 'WAP'
+  });
+  window.location.href = payUrl + '?' + params.toString();
+}
+
+// 解锁完整报告（内测模式与支付成功后共用）
+function unlockReport() {
+  document.getElementById('pay-section').classList.add('hidden');
+  document.getElementById('unlocked-section').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+// 内测模式下的文案替换
+function applyFreeMode() {
+  if (!FREE_MODE) return;
+  document.getElementById('unlock-title').textContent = '🎁 解锁完整学习报告';
+  var priceEl = document.getElementById('unlock-price');
+  priceEl.textContent = '内测期间免费';
+  priceEl.style.fontSize = '20px';
+  document.getElementById('unlock-btn').textContent = '免费解锁完整报告';
+}
+
+window.onload = function() {
+  applyFreeMode();
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('unlocked') === '1') {
+    setTimeout(function () {
+      showResult();
+      unlockReport();
+    }, 100);
+  }
+};
+
+function shareResult() {
+  const type = document.getElementById('r-type').textContent;
+  const shareText = '我测出来是【' + type + '】，你也来测测你的学习风格吧！';
+  const shareUrl = window.location.href;
+  const fullText = shareText + ' ' + shareUrl;
+  copyToClipboard(fullText);
+}
+
+function copyToClipboard(text) {
+  // 方案1：现代 Clipboard API（需 HTTPS 或 localhost）
+  if (window.isSecureContext && navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () {
+      showToast('链接已复制，快去分享给同学吧！');
+    }).catch(function () {
+      legacyCopy(text);
+    });
+    return;
+  }
+  // 方案2：降级 execCommand
+  legacyCopy(text);
+}
+
+function legacyCopy(text, okMsg, failMsg) {
+  var ok = false;
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.left = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+  } catch (e) {
+    ok = false;
+  }
+  showToast(ok ? (okMsg || '链接已复制，快去分享给同学吧！') : (failMsg || '请手动复制链接：\n' + text));
+}
+
+// 复制 QQ 号
+function copyQQ() {
+  legacyCopy('3641906449', 'QQ号已复制：3641906449\n打开QQ搜索即可添加', 'QQ号：3641906449');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(58,58,58,0.92);color:#fff;padding:14px 24px;border-radius:10px;font-size:15px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);white-space:pre-line;text-align:center;max-width:80%;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function () { t.style.display = 'none'; }, 2500);
+}
+
+function restart() {
+  showPage('page-home');
+}
+
+function showPage(id) {
+  ['page-home', 'page-test', 'page-result', 'page-loading'].forEach(p => {
+    document.getElementById(p).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
